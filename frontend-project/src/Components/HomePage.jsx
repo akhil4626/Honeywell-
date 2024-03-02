@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import GoogleMapsComponent from './GoogleMapsComponent'; // Import your Google Maps component
+import GoogleMapsComponent from './GoogleMapsComponent'; 
 
 function HomePage() {
   const [cities, setCities] = useState([]);
   const [selectedCityA, setSelectedCityA] = useState('');
   const [selectedCityB, setSelectedCityB] = useState('');
-  const [isSubmitted, setIsSubmitted] = useState(false); // State to track submission
+  const [isSubmitted, setIsSubmitted] = useState(false); 
 
   useEffect(() => {
     axios.get('http://localhost:5000/api/cities')
