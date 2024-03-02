@@ -1,70 +1,56 @@
-import React, { useState } from 'react';
-import { Box, Button, Text, Input } from '@chakra-ui/react';
+import React, { useState, useEffect } from 'react';
 
-function Homepage() {
+function GoogleMapsComponent({ selectedCityA, selectedCityB }) {
+  const [map, setMap] = useState(null);
 
-  const [distance, setDistance] = useState('');
-  const [mapSrc, setMapSrc] = useState('');
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places`;
+    script.async = true;
+    script.onload = () => {
+      initMap();
+    };
+    document.body.appendChild(script);
 
-  async function calculateDistance(selectedCityB,selectedCityA) {
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
+  const initMap = () => {
+    const directionsService = new window.google.maps.DirectionsService();
+    const directionsRenderer = new window.google.maps.DirectionsRenderer();
+    const mapOptions = {
+      zoom: 8,
+      center: { lat: 0, lng: 0 }
+    };
+    const map = new window.google.maps.Map(document.getElementById('map'), mapOptions);
+    directionsRenderer.setMap(map);
+    setMap(map);
+
+    calculateAndDisplayRoute(directionsService, directionsRenderer);
+  };
+
+  const calculateAndDisplayRoute = (directionsService, directionsRenderer) => {
     if (!selectedCityA || !selectedCityB) return;
 
-    const response = await fetch(
-      `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${selectedCityA}&destinations=${selectedCityB}&key=AIzaSyAfq0dEhEeJ_GLQIl4xEB79LCGtsace1nI`
+    directionsService.route(
+      {
+        origin: selectedCityA,
+        destination: selectedCityB,
+        travelMode: 'DRIVING'
+      },
+      (response, status) => {
+        if (status === 'OK') {
+          directionsRenderer.setDirections(response);
+        } else {
+          console.error('Directions request failed due to ' + status);
+        }
+      }
     );
+  };
 
-    const data = await response.json();
-
-    if (data.status === 'OK') {
-      const distance = data.rows[0].elements[0].distance.text;
-      setDistance(distance);
-
-      // Update map source URL
-      setMapSrc(`https://www.google.com/maps/embed/v1/directions?key=YOUR_API_KEY&origin=${selectedCityA}&destination=${selectedCityB}`);
-    } else {
-      setDistance('Error calculating distance');
-      setMapSrc('');
-    }
-  }
-
-  return (
-    <Box p={4}>
-      <Input
-        placeholder="Enter City A"
-        value={selectedCityA}
-        onChange={(e) => setSelectedCityA(e.target.value)}
-        mb={2}
-      />
-      <Input
-        placeholder="Enter City B"
-        value={selectedCityB}
-        onChange={(e) => setSelectedCityB(e.target.value)}
-        mb={2}
-      />
-      <Button colorScheme="blue" onClick={calculateDistance}>
-        Calculate Distance
-      </Button>
-      {distance && (
-        <Box mt={4}>
-          <Text>
-            Distance between {selectedCityA} and {selectedCityB}: {distance}
-          </Text>
-          {mapSrc && (
-            // Google Maps iframe
-            <iframe
-              title="Google Map"
-              width="600"
-              height="450"
-              frameBorder="0"
-              style={{ border: 0 }}
-              src={mapSrc}
-              allowFullScreen
-            ></iframe>
-          )}
-        </Box>
-      )}
-    </Box>
-  );
+  return <div id="map" style={{ width: '100%', height: '400px' }}></div>;
 }
 
-export default Homepage;
+export default GoogleMapsComponent;
