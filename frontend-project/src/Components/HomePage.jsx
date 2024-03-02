@@ -55,8 +55,8 @@ function HomePage() {
           ))}
         </select>
       </div>
-      <button onClick={handleSubmit}>Submit</button> {/* Add submit button */}
-      {isSubmitted && ( // Render Google Maps component if form is submitted
+      <button onClick={handleSubmit}>Submit</button>
+      {isSubmitted && (
         <GoogleMapsComponent
           selectedCityA={selectedCityA}
           selectedCityB={selectedCityB}
