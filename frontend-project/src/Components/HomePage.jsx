@@ -9,7 +9,6 @@ function HomePage() {
   const [isSubmitted, setIsSubmitted] = useState(false); // State to track submission
 
   useEffect(() => {
-    // Fetch cities data from the server
     axios.get('http://localhost:5000/api/cities')
       .then(response => {
         setCities(response.data);
