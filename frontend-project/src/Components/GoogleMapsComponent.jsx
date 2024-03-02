@@ -5,7 +5,7 @@ function GoogleMapsComponent({ selectedCityA, selectedCityB }) {
 
   useEffect(() => {
     const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places`;
+    script.src = `https://maps.googleapis.com/maps/api/js?AIzaSyAfq0dEhEeJ_GLQIl4xEB79LCGtsace1nI&libraries=places`;
     script.async = true;
     script.onload = () => {
       initMap();
